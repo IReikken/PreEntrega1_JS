@@ -1,89 +1,103 @@
-let producto = " ";
-let agregar = " ";
-let costo = 0;
-let costoTotal = 0;
-let camtidad = 0;
-let cantidadTotal = 0;
-let precio = 0;
-let msi = " ";
-let cuota = " ";
-let costoMes = 0;
-let cuotaValida = true;
+let num_estudiantes = 0
+let num_materias = 0
+let calificaciones = []
+let materias = []
+let nombres = []
+let estidiantes= []
+let datos_estudiante = {}
 
-// Función para calcular el costo sumado de los productos
-function multiplicacion(unidad,costo){
-    return unidad * costo
-}
 
-// Función para guardar la cantidad total de productos agregadors
-function acumulador(cantidad){
-    return cantidadTotal=cantidad+cantidadTotal
-}
 
-// Función para aplicar descuento en base del total de productos
-function descuento(cantidadTotal){
-    
-    if ((cantidadTotal > 10)){
-        costoTotal=costoTotal*0.9
-        alert("El monto a pagar con descuento es de $"+costoTotal)
+    // Función para registrar cantidad
+function cantidad(objeto){
+    let num = 0 
+    num = parseInt(prompt("Ingrese la candidad de "+objeto))
+    while (num<=0){
+        num = parseInt(prompt("Debe ingresar una cantidad mayor a 0"))
     }
-    else{
-        alert("El monto a pagar es de $"+costoTotal)
+    return num
+}
+    // Funcion para guardar nombres en arreglo
+function registro(cantidad,texto){
+    let arreglo = []
+    let orden = 0    
+    for(let i=0;i<cantidad;i++){
+        orden = i+1
+        arreglo[i]=prompt(texto+ orden)
     }
+    return arreglo;
 }
 
-//Ciclo para acumular distintos tipos de productos
-while(agregar != "no"){
+    //Objeto de estudiantes
+function estudiante(nom){
+    this.nombre = nom
+}
 
-    producto = prompt("Escriba qué artículo desea comprar: jarabe $200, pastilla $350, inyeccion $500")
-    cantidad = parseInt(prompt("Escriba la cantidad que desea (10 o mas productos cambinados se hace 25% de descuento"))
-    if(cantidad>0){
-        //Calculadora de costos en función del producto elejido
-        switch(producto){
-            case "jarabe":
-                precio = multiplicacion(cantidad,200)
-                acumulador(cantidad)
-                break
-            case "pastilla":
-                precio = multiplicacion(cantidad,350)
-                acumulador(cantidad)
-                break
-            case "inyeccion":
-                precio = multiplicacion(cantidad,500)
-                acumulador(cantidad)
-                break
-            default:
-                alert("Escriba un producto válido")
-                break
-                }
-        //Acumulador del costo total de todos los productos seleccionados
-        costoTotal=precio+costoTotal
-        agregar = prompt("¿Desea comprar algo más? (Escriba 'no' para dejar de agregar productos")
+
+//Almacenamiento de estudiantes
+num_estudiantes = cantidad("estudiantes")
+nombres = registro(num_estudiantes,"Ingrese el nombre del estudiante ")
+
+//Almacenamiento de materias
+num_materias = cantidad("materias")
+materias = registro(num_materias,"Ingrese el nombre de la materia ")
+
+
+let dato = []
+let calif = 0
+let objeto = {} 
+
+//Asginación de calificaciones a estudiantes
+
+for(let i=0;i<num_estudiantes;i++){
+    objeto = new estudiante(nombres[i])
+    for(let j=0;j<num_materias;j++){
+        calif =  parseInt(prompt("Ingrese la calificación (0-10) de "+nombres[i]+" en la materia "+materias[j]))
+        while ((calif<0 || calif>10)){
+            calif = parseInt(prompt("Debe ingresar una cantidad entre 1 y 10"))
         }
-    else{
-        alert("Escriba una cantidad mayor a 0")
+        Object.defineProperty(objeto,materias[j],{
+            value: calif,
+            writable: true
+        })
     }
-}       
+    dato[i] = objeto 
 
-//Función para determinar si se aplica descuento
-descuento(cantidadTotal);
+    }
+console.log(dato)
 
-//Seleccion de pago a meses sin interes
-msi= prompt("Desea pagar a meses sin intereses")
-if(msi == "si"){
-    // Bucle para validar cantidad de cuotas
-    while(cuotaValida){
-        cuota = prompt("Escoja en cuantas cuotas desea pagar (1-12)")
-        if((cuota>0)&&(cuota<=12)){
-            costoMes = costoTotal / cuota
-            cuotaValida = false
-            alert("El monto a pagar es $"+costoMes+" durante "+cuota+" meses")
-            }
-        else{
-        alert("Escriba un numero válido de cuotas")
+console.log(dato[0].nombre)
+
+// Cálculo de promedios
+let promedios = []
+let promedio = 0
+for(let i=0; i<dato.length; i++){
+    promedio = 0
+    for(let j=0; j<materias.length; j++){
+        promedio += dato[i][materias[j]]
         }
-    }
+    promedios[i] = promedio / num_materias
+    Object.defineProperty(dato[i],"promedio",{
+        value: promedios[i],
+        writable: true
+    })
 }
-else { 
-    alert("El monto a pagar es: $"+costoTotal)
+
+posiciones = {}
+for(let i=0; i<nombres.length;i++){
+    Object.defineProperty(posiciones,"promedio",{
+        value: promedios[i],
+        writable: true
+    })
+    Object.defineProperty(posiciones,"nombre",{
+        value: nombres[i],
+        writable: true
+    })
 }
+
+
+posiciones.sort((a,b) => b.promedio-a.promedio)
+
+
+
+console.log(posiciones)
